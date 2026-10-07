@@ -55,9 +55,14 @@ def init_db():
             payment_reference TEXT DEFAULT '',
             created_at TEXT NOT NULL,
             paid_at TEXT DEFAULT '',
-            delivered_at TEXT DEFAULT ''
+            delivered_at TEXT DEFAULT '',
+            items_json TEXT DEFAULT '[]'
         )
     """)
+
+    columns = {row[1] for row in con.execute('PRAGMA table_info(orders)').fetchall()}
+    if 'items_json' not in columns:
+        con.execute("ALTER TABLE orders ADD COLUMN items_json TEXT DEFAULT '[]'")
 
     con.commit()
     con.close()
