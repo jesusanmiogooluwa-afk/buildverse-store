@@ -16,7 +16,7 @@ DB = BASE / "buildverse.db"
 HOST = "0.0.0.0"
 PORT = int(os.environ.get("PORT", "8080"))
 
-ADMIN_KEY = os.environ.get("BUILDVERSE_ADMIN_KEY", "buildverse-admin-2026")
+ADMIN_KEY = os.environ.get("BUILDVERSE_ADMIN_KEY")
 PAYSTACK_SECRET_KEY = os.environ.get("PAYSTACK_SECRET_KEY", "")
 
 PRODUCTS = {
@@ -869,7 +869,7 @@ if __name__ == "__main__":
     )
     print("")
     print("Admin key:")
-    print(ADMIN_KEY)
+    print("Admin key loaded from environment")
     print("")
     print("Server running...")
     print("====================================")
