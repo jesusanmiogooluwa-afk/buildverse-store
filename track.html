@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Track Order — BuildVerse Store</title>
+
+  <style>
+    *{
+      box-sizing:border-box;
+    }
+
+    body{
+      margin:0;
+      font-family:Arial,Helvetica,sans-serif;
+      background:#f5f5f5;
+      color:#111;
+    }
+
+    .container{
+      width:min(600px,92%);
+      margin:60px auto;
+    }
+
+    .card{
+      background:#fff;
+      border-radius:20px;
+      padding:30px;
+      box-shadow:0 10px 30px rgba(0,0,0,.08);
+    }
+
+    h1{
+      margin:0 0 8px;
+      font-size:30px;
+    }
+
+    .subtitle{
+      color:#666;
+      margin-bottom:28px;
+    }
+
+    label{
+      display:block;
+      font-weight:bold;
+      margin-bottom:8px;
+    }
+
+    input{
+      width:100%;
+      padding:15px;
+      border:1px solid #ddd;
+      border-radius:10px;
+      font-size:16px;
+      margin-bottom:12px;
+    }
+
+    button{
+      width:100%;
+      padding:15px;
+      border:0;
+      border-radius:10px;
+      background:#111;
+      color:#fff;
+      font-size:16px;
+      font-weight:bold;
+      cursor:pointer;
+    }
+
+    button:disabled{
+      opacity:.6;
+    }
+
+    .status{
+      margin-top:25px;
+    }
+
+    .error{
+      background:#fff0f0;
+      color:#c00;
+      padding:14px;
+      border-radius:10px;
+    }
+
+    .order{
+      margin-top:25px;
+      border-top:1px solid #eee;
+      padding-top:25px;
+    }
+
+    .row{
+      display:flex;
+      justify-content:space-between;
+      gap:20px;
+      padding:12px 0;
+      border-bottom:1px solid #eee;
+    }
+
+    .label{
+      color:#777;
+    }
+
+    .value{
+      font-weight:bold;
+      text-align:right;
+    }
+
+    .badge{
+      display:inline-block;
+      padding:7px 12px;
+      border-radius:20px;
+      font-size:13px;
+    }
+
+    .paid{
+      background:#e7f8ed;
+      color:#087a35;
+    }
+
+    .pending{
+      background:#fff5d9;
+      color:#8a6500;
+    }
+
+    .delivered{
+      background:#e7f8ed;
+      color:#087a35;
+    }
+
+    .not-delivered{
+      background:#fff5d9;
+      color:#8a6500;
+    }
+
+    .back{
+      display:block;
+      text-align:center;
+      margin-top:20px;
+      color:#111;
+      text-decoration:none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <div class="card">
+
+      <h1>Track Your Order</h1>
+
+      <div class="subtitle">
+        Enter your BuildVerse order number to check your order status.
+      </div>
+
+      <label for="orderNumber">
+        Order Number
+      </label>
+
+      <input
+        id="orderNumber"
+        type="text"
+        placeholder="e.g. BV-614C1967"
+        autocomplete="off"
+      >
+
+      <button id="trackButton" onclick="trackOrder()">
+        Track Order
+      </button>
+
+      <div id="status"></div>
+
+    </div>
+
+    <a class="back" href="/">
+      ← Back to Store
+    </a>
+
+  </div>
+
+<script>
+
+async function trackOrder(){
+
+  const input =
+    document.getElementById("orderNumber");
+
+  const status =
+    document.getElementById("status");
+
+  const button =
+    document.getElementById("trackButton");
+
+  const orderNo =
+    input.value.trim();
+
+  if(!orderNo){
+
+    status.innerHTML = `
+      <div class="error">
+        Please enter your order number.
+      </div>
+    `;
+
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = "Checking...";
+
+  status.innerHTML = "";
+
+  try{
+
+    const response =
+      await fetch(
+        "/api/orders/track?order_no=" +
+        encodeURIComponent(orderNo)
+      );
+
+    const data =
+      await response.json();
+
+    if(!response.ok){
+
+      throw new Error(
+        data.error || "Order not found."
+      );
+
+    }
+
+    const paymentClass =
+      data.payment_status === "paid"
+      ? "paid"
+      : "pending";
+
+    const paymentText =
+      data.payment_status === "paid"
+      ? "Paid"
+      : "Pending";
+
+    const deliveryClass =
+      data.delivery_status === "delivered"
+      ? "delivered"
+      : "not-delivered";
+
+    const deliveryText =
+      data.delivery_status === "delivered"
+      ? "Delivered"
+      : "Not Delivered";
+
+    const amount =
+      Number(data.amount || 0).toLocaleString(
+        "en-NG"
+      );
+
+    let items = [];
+
+    try {
+      items = JSON.parse(data.items_json || "[]");
+    } catch(error) {
+      items = [];
+    }
+
+    const productsHtml = items.length
+      ? items.map(item => `
+          <div style="
+            display:flex;
+            justify-content:space-between;
+            gap:15px;
+            padding:7px 0;
+            text-align:left;
+          ">
+            <span>
+              ${escapeHtml(item.product_name || "Product")}
+            </span>
+
+            <strong style="white-space:nowrap">
+              ×${Number(item.quantity || 1)}
+            </strong>
+          </div>
+        `).join("")
+      : `
+        <div>
+          ${escapeHtml(data.product_name || "Product")}
+        </div>
+      `;
+
+    const date =
+      data.created_at
+      ? new Date(data.created_at).toLocaleString(
+          "en-NG",
+          {
+            dateStyle:"medium",
+            timeStyle:"short"
+          }
+        )
+      : "Not available";
+
+    status.innerHTML = `
+
+      <div class="order">
+
+        <div class="row">
+          <span class="label">Order Number</span>
+          <span class="value">
+            ${escapeHtml(data.order_no)}
+          </span>
+        </div>
+
+        <div class="row">
+          <span class="label">Customer</span>
+          <span class="value">
+            ${escapeHtml(data.customer_name)}
+          </span>
+        </div>
+
+        <div class="row">
+          <span class="label">Products</span>
+          <span class="value" style="width:65%">
+            ${productsHtml}
+          </span>
+        </div>
+
+        <div class="row">
+          <span class="label">Total</span>
+          <span class="value">
+            ₦${amount}
+          </span>
+        </div>
+
+        <div class="row">
+          <span class="label">Payment</span>
+          <span class="value">
+            <span class="badge ${paymentClass}">
+              ${paymentText}
+            </span>
+          </span>
+        </div>
+
+        <div class="row">
+          <span class="label">Delivery</span>
+          <span class="value">
+            <span class="badge ${deliveryClass}">
+              ${deliveryText}
+            </span>
+          </span>
+        </div>
+
+        <div class="row">
+          <span class="label">Order Date</span>
+          <span class="value">
+            ${date}
+          </span>
+        </div>
+
+      </div>
+
+    `;
+
+  }catch(error){
+
+    status.innerHTML = `
+      <div class="error">
+        ${escapeHtml(error.message)}
+      </div>
+    `;
+
+  }finally{
+
+    button.disabled = false;
+    button.textContent = "Track Order";
+
+  }
+
+}
+
+
+function escapeHtml(value){
+
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+</script>
+
+</body>
+</html>

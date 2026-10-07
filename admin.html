@@ -1,0 +1,1752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>BuildVerse Admin</title>
+
+<style>
+:root{
+  --bg:#080808;
+  --card:#111111;
+  --card2:#171717;
+  --gold:#f5b83d;
+  --gold2:#ffd875;
+  --green:#35d07f;
+  --red:#ff5c5c;
+  --blue:#5da9ff;
+  --text:#ffffff;
+  --muted:#9d9d9d;
+  --border:#292929;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  background:
+    radial-gradient(circle at 10% 0%,rgba(245,184,61,.13),transparent 28%),
+    radial-gradient(circle at 90% 10%,rgba(120,70,255,.10),transparent 25%),
+    var(--bg);
+  color:var(--text);
+  font-family:Arial,Helvetica,sans-serif;
+}
+
+button,input,select{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+.container{
+  width:min(1400px,94%);
+  margin:auto;
+}
+
+/* HEADER */
+
+.header{
+  padding:24px 0;
+  border-bottom:1px solid var(--border);
+  position:sticky;
+  top:0;
+  z-index:20;
+  background:rgba(8,8,8,.94);
+  backdrop-filter:blur(16px);
+}
+
+.header-inner{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+}
+
+.logo{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.logo-mark{
+  width:45px;
+  height:45px;
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,#ffd875,#c78318);
+  color:#111;
+  font-size:20px;
+  font-weight:900;
+  box-shadow:0 0 25px rgba(245,184,61,.25);
+}
+
+.logo h1{
+  margin:0;
+  font-size:20px;
+}
+
+.logo span{
+  color:var(--gold);
+}
+
+.logo small{
+  display:block;
+  color:var(--muted);
+  margin-top:4px;
+}
+
+.header-actions{
+  display:flex;
+  gap:10px;
+}
+
+.btn{
+  border:1px solid var(--border);
+  background:#151515;
+  color:white;
+  border-radius:10px;
+  padding:11px 15px;
+}
+
+.btn:hover{
+  border-color:var(--gold);
+}
+
+.btn.gold{
+  background:linear-gradient(135deg,#ffd875,#d99622);
+  color:#111;
+  border:0;
+  font-weight:800;
+}
+
+/* LOGIN */
+
+.login{
+  max-width:460px;
+  margin:90px auto;
+  padding:35px;
+  background:linear-gradient(145deg,#161616,#0e0e0e);
+  border:1px solid #343434;
+  border-radius:24px;
+  box-shadow:0 25px 80px rgba(0,0,0,.45);
+}
+
+.login h2{
+  margin-top:0;
+  font-size:30px;
+}
+
+.login p{
+  color:var(--muted);
+  line-height:1.6;
+}
+
+.login input{
+  width:100%;
+  padding:15px;
+  border-radius:12px;
+  border:1px solid #333;
+  background:#080808;
+  color:white;
+  outline:none;
+  margin:15px 0;
+}
+
+.login input:focus{
+  border-color:var(--gold);
+}
+
+.login button{
+  width:100%;
+}
+
+/* DASHBOARD */
+
+#dashboard{
+  display:none;
+}
+
+.hero{
+  padding:35px 0 25px;
+}
+
+.hero h2{
+  font-size:34px;
+  margin:0 0 8px;
+}
+
+.hero p{
+  color:var(--muted);
+  margin:0;
+}
+
+/* STATS */
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:15px;
+  margin:15px 0 30px;
+}
+
+.stat{
+  padding:22px;
+  border:1px solid var(--border);
+  border-radius:18px;
+  background:linear-gradient(145deg,#161616,#0e0e0e);
+  position:relative;
+  overflow:hidden;
+}
+
+.stat:after{
+  content:"";
+  position:absolute;
+  width:90px;
+  height:90px;
+  border-radius:50%;
+  background:rgba(245,184,61,.08);
+  right:-30px;
+  top:-30px;
+}
+
+.stat-label{
+  color:var(--muted);
+  font-size:13px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+}
+
+.stat-value{
+  font-size:28px;
+  font-weight:800;
+  margin-top:10px;
+}
+
+.stat.gold .stat-value{
+  color:var(--gold);
+}
+
+.stat.green .stat-value{
+  color:var(--green);
+}
+
+.stat.red .stat-value{
+  color:var(--red);
+}
+
+.stat.blue .stat-value{
+  color:var(--blue);
+}
+
+/* TOOLBAR */
+
+.toolbar{
+  display:flex;
+  gap:10px;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:15px;
+  flex-wrap:wrap;
+}
+
+.search{
+  flex:1;
+  min-width:220px;
+  padding:13px 15px;
+  border-radius:11px;
+  background:#111;
+  border:1px solid var(--border);
+  color:white;
+  outline:none;
+}
+
+.search:focus{
+  border-color:var(--gold);
+}
+
+.filter{
+  padding:13px;
+  border-radius:11px;
+  background:#111;
+  border:1px solid var(--border);
+  color:white;
+}
+
+/* TABLE */
+
+.orders{
+  background:#101010;
+  border:1px solid var(--border);
+  border-radius:20px;
+  overflow:hidden;
+  margin-bottom:50px;
+}
+
+.orders-head{
+  padding:20px;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.orders-head h3{
+  margin:0;
+}
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:1000px;
+}
+
+th{
+  text-align:left;
+  color:#888;
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:.8px;
+  padding:15px 18px;
+  background:#151515;
+}
+
+td{
+  padding:17px 18px;
+  border-top:1px solid #222;
+  vertical-align:middle;
+}
+
+tr:hover td{
+  background:#151515;
+}
+
+.customer{
+  font-weight:700;
+}
+
+.email{
+  color:#999;
+  font-size:12px;
+  margin-top:4px;
+}
+
+.order-no{
+  color:var(--gold);
+  font-weight:700;
+  font-size:13px;
+}
+
+.product{
+  max-width:230px;
+  line-height:1.4;
+}
+
+.amount{
+  font-weight:800;
+}
+
+.badge{
+  display:inline-block;
+  padding:6px 9px;
+  border-radius:20px;
+  font-size:11px;
+  font-weight:700;
+  white-space:nowrap;
+}
+
+.badge.paid{
+  background:rgba(53,208,127,.12);
+  color:var(--green);
+}
+
+.badge.pending{
+  background:rgba(245,184,61,.12);
+  color:var(--gold);
+}
+
+.badge.failed{
+  background:rgba(255,92,92,.12);
+  color:var(--red);
+}
+
+.badge.delivered{
+  background:rgba(93,169,255,.12);
+  color:var(--blue);
+}
+
+.badge.notdelivered{
+  background:#222;
+  color:#aaa;
+}
+
+.actions{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+}
+
+.action{
+  border:1px solid #333;
+  background:#181818;
+  color:white;
+  padding:7px 9px;
+  border-radius:8px;
+  font-size:11px;
+}
+
+.action:hover{
+  border-color:var(--gold);
+}
+
+.action.green{
+  color:var(--green);
+}
+
+.action.red{
+  color:var(--red);
+}
+
+.empty{
+  text-align:center;
+  padding:60px 20px;
+  color:#777;
+}
+
+/* STATUS */
+
+.status{
+  position:fixed;
+  right:20px;
+  bottom:20px;
+  padding:13px 18px;
+  border-radius:12px;
+  background:#191919;
+  border:1px solid #333;
+  display:none;
+  z-index:100;
+}
+
+.status.show{
+  display:block;
+}
+
+.status.success{
+  border-color:var(--green);
+  color:var(--green);
+}
+
+.status.error{
+  border-color:var(--red);
+  color:var(--red);
+}
+
+/* RESPONSIVE */
+
+@media(max-width:850px){
+
+  .stats{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .hero h2{
+    font-size:27px;
+  }
+
+  .header-actions .btn:first-child{
+    display:none;
+  }
+
+}
+
+@media(max-width:500px){
+
+  .container{
+    width:92%;
+  }
+
+  .header{
+    padding:15px 0;
+  }
+
+  .logo-mark{
+    width:40px;
+    height:40px;
+  }
+
+  .logo h1{
+    font-size:17px;
+  }
+
+  .logo small{
+    font-size:10px;
+  }
+
+  .stats{
+    grid-template-columns:1fr 1fr;
+    gap:9px;
+  }
+
+  .stat{
+    padding:16px;
+  }
+
+  .stat-value{
+    font-size:21px;
+  }
+
+  .login{
+    margin:50px auto;
+    padding:25px;
+  }
+
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+
+<div id="loginScreen">
+
+  <div class="login">
+
+    <div class="logo">
+      <div class="logo-mark">BV</div>
+
+      <div>
+        <h1>BuildVerse <span>Studios</span></h1>
+        <small>Store Administration</small>
+      </div>
+    </div>
+
+    <br>
+
+    <h2>Welcome back.</h2>
+
+    <p>
+      Enter your administrator key to access your
+      BuildVerse Store orders and sales dashboard.
+    </p>
+
+    <input
+      id="adminKey"
+      type="password"
+      placeholder="Enter admin key"
+      autocomplete="off"
+    >
+
+    <button
+      class="btn gold"
+      onclick="login()"
+    >
+      Enter Dashboard →
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- DASHBOARD -->
+
+<div id="dashboard">
+
+  <header class="header">
+
+    <div class="container header-inner">
+
+      <div class="logo">
+
+        <div class="logo-mark">BV</div>
+
+        <div>
+          <h1>BuildVerse <span>Studios</span></h1>
+          <small>Store Administration</small>
+        </div>
+
+      </div>
+
+      <div class="header-actions">
+
+        <button
+          class="btn"
+          onclick="loadAll()"
+        >
+          ↻ Refresh
+        </button>
+
+        <button
+          class="btn"
+          onclick="logout()"
+        >
+          Logout
+        </button>
+
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <main class="container">
+
+    <section class="hero">
+
+      <h2>Good morning, Builder. 👋</h2>
+
+      <p>
+        Here's what's happening in your BuildVerse Store.
+      </p>
+
+    </section>
+
+
+    <!-- STATS -->
+
+    <section class="stats">
+
+      <div class="stat gold">
+
+        <div class="stat-label">
+          Revenue
+        </div>
+
+        <div
+          class="stat-value"
+          id="revenue"
+        >
+          ₦0
+        </div>
+
+      </div>
+
+
+      <div class="stat blue">
+
+        <div class="stat-label">
+          Total Orders
+        </div>
+
+        <div
+          class="stat-value"
+          id="totalOrders"
+        >
+          0
+        </div>
+
+      </div>
+
+
+      <div class="stat red">
+
+        <div class="stat-label">
+          Pending Payments
+        </div>
+
+        <div
+          class="stat-value"
+          id="pendingOrders"
+        >
+          0
+        </div>
+
+      </div>
+
+
+      <div class="stat green">
+
+        <div class="stat-label">
+          Customers
+        </div>
+
+        <div
+          class="stat-value"
+          id="customers"
+        >
+          0
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ORDERS -->
+
+    <section class="orders">
+
+      <div class="orders-head">
+
+        <h3>Recent Orders</h3>
+
+        <span
+          id="orderCount"
+          style="color:#888;font-size:13px"
+        >
+          0 orders
+        </span>
+
+      </div>
+
+
+      <div class="toolbar">
+
+        <input
+          id="search"
+          class="search"
+          placeholder="Search customer, email or order number..."
+          oninput="renderOrders()"
+        >
+
+        <select
+          id="statusFilter"
+          class="filter"
+          onchange="renderOrders()"
+        >
+
+          <option value="all">
+            All orders
+          </option>
+
+          <option value="pending">
+            Pending
+          </option>
+
+          <option value="paid">
+            Paid
+          </option>
+
+          <option value="failed">
+            Failed
+          </option>
+
+        </select>
+
+        <select
+          id="deliveryFilter"
+          class="filter"
+          onchange="renderOrders()"
+        >
+
+          <option value="all">
+            All deliveries
+          </option>
+
+          <option value="not_delivered">
+            Not Delivered
+          </option>
+
+          <option value="delivered">
+            Delivered
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div class="table-wrap">
+
+        <table>
+
+          <thead>
+
+            <tr>
+
+              <th>Order</th>
+
+              <th>Customer</th>
+
+              <th>Product</th>
+
+              <th>Amount</th>
+
+              <th>Payment</th>
+
+              <th>Delivery</th>
+
+              <th>Date</th>
+
+              <th>Actions</th>
+
+            </tr>
+
+          </thead>
+
+          <tbody id="ordersBody">
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+
+<div
+  id="status"
+  class="status"
+></div>
+
+
+<script>
+
+const API = "";
+
+let adminKey = localStorage.getItem(
+  "buildverse_admin_key"
+) || "";
+
+let orders = [];
+
+
+/* LOGIN */
+
+function login(){
+
+  const input =
+    document.getElementById("adminKey");
+
+  const key =
+    input.value.trim();
+
+  if(!key){
+
+    showStatus(
+      "Enter your admin key.",
+      "error"
+    );
+
+    return;
+  }
+
+  adminKey = key;
+
+  localStorage.setItem(
+    "buildverse_admin_key",
+    key
+  );
+
+  testLogin();
+
+}
+
+
+async function testLogin(){
+
+  try{
+
+    const response =
+      await fetch(
+        API + "/api/admin/summary",
+        {
+          headers:{
+            "X-Admin-Key":adminKey
+          }
+        }
+      );
+
+    if(response.status === 401){
+
+      showStatus(
+        "Invalid admin key.",
+        "error"
+      );
+
+      localStorage.removeItem(
+        "buildverse_admin_key"
+      );
+
+      adminKey = "";
+
+      return;
+    }
+
+    if(!response.ok){
+
+      throw new Error(
+        "Server error"
+      );
+
+    }
+
+    document.getElementById(
+      "loginScreen"
+    ).style.display="none";
+
+    document.getElementById(
+      "dashboard"
+    ).style.display="block";
+
+    loadAll();
+
+  }catch(error){
+
+    showStatus(
+      "Could not connect to BuildVerse backend.",
+      "error"
+    );
+
+  }
+
+}
+
+
+/* LOGOUT */
+
+function logout(){
+
+  localStorage.removeItem(
+    "buildverse_admin_key"
+  );
+
+  adminKey="";
+
+  location.reload();
+
+}
+
+
+/* LOAD EVERYTHING */
+
+async function loadAll(){
+
+  await Promise.all([
+    loadSummary(),
+    loadOrders()
+  ]);
+
+}
+
+
+/* SUMMARY */
+
+async function loadSummary(){
+
+  try{
+
+    const response =
+      await fetch(
+        API + "/api/admin/summary",
+        {
+          headers:{
+            "X-Admin-Key":adminKey
+          }
+        }
+      );
+
+    if(response.status === 401){
+
+      logout();
+      return;
+
+    }
+
+    const data =
+      await response.json();
+
+    document.getElementById(
+      "revenue"
+    ).textContent =
+      naira(data.revenue);
+
+    document.getElementById(
+      "totalOrders"
+    ).textContent =
+      data.total_orders;
+
+    document.getElementById(
+      "pendingOrders"
+    ).textContent =
+      data.pending;
+
+    document.getElementById(
+      "customers"
+    ).textContent =
+      data.customers;
+
+  }catch(error){
+
+    showStatus(
+      "Failed to load summary.",
+      "error"
+    );
+
+  }
+
+}
+
+
+/* ORDERS */
+
+async function loadOrders(){
+
+  try{
+
+    const response =
+      await fetch(
+        API + "/api/admin/orders",
+        {
+          headers:{
+            "X-Admin-Key":adminKey
+          }
+        }
+      );
+
+    if(response.status === 401){
+
+      logout();
+      return;
+
+    }
+
+    orders =
+      await response.json();
+
+    renderOrders();
+
+  }catch(error){
+
+    showStatus(
+      "Failed to load orders.",
+      "error"
+    );
+
+  }
+
+}
+
+
+/* RENDER ORDERS */
+
+function renderOrders(){
+
+  const body =
+    document.getElementById(
+      "ordersBody"
+    );
+
+  const search =
+    document.getElementById(
+      "search"
+    ).value
+      .toLowerCase()
+      .trim();
+
+  const filter =
+    document.getElementById(
+      "statusFilter"
+    ).value;
+
+  const deliveryFilter =
+    document.getElementById(
+      "deliveryFilter"
+    ).value;
+
+
+  const filtered =
+    orders.filter(order => {
+
+      const matchesSearch =
+        !search ||
+        order.order_no
+          .toLowerCase()
+          .includes(search) ||
+        order.customer_name
+          .toLowerCase()
+          .includes(search) ||
+        order.email
+          .toLowerCase()
+          .includes(search);
+
+
+      const matchesStatus =
+        filter === "all" ||
+        order.payment_status === filter;
+
+      const matchesDelivery =
+        deliveryFilter === "all" ||
+        order.delivery_status === deliveryFilter;
+
+
+      return (
+        matchesSearch &&
+        matchesStatus &&
+        matchesDelivery
+      );
+
+    });
+
+
+  document.getElementById(
+    "orderCount"
+  ).textContent =
+    `${filtered.length} order${
+      filtered.length === 1 ? "" : "s"
+    }`;
+
+
+  if(!filtered.length){
+
+    body.innerHTML = `
+      <tr>
+        <td
+          colspan="8"
+          class="empty"
+        >
+          No orders found yet.
+        </td>
+      </tr>
+    `;
+
+    return;
+
+  }
+
+
+  body.innerHTML =
+    filtered.map(order => `
+
+      <tr>
+
+        <td>
+
+          <div class="order-no">
+            ${escapeHtml(order.order_no)}
+          </div>
+
+        </td>
+
+
+        <td>
+
+          <div class="customer">
+            ${escapeHtml(order.customer_name)}
+          </div>
+
+          <div class="email">
+            ${escapeHtml(order.email)}
+          </div>
+
+          <div class="email">
+            ${escapeHtml(order.phone)}
+          </div>
+
+        </td>
+
+
+        <td>
+
+          <div class="product">
+            ${escapeHtml(order.product_name)}
+          </div>
+
+        </td>
+
+
+        <td>
+
+          <div class="amount">
+            ${naira(order.amount)}
+          </div>
+
+        </td>
+
+
+        <td>
+
+          <span class="badge ${
+            order.payment_status
+          }">
+
+            ${paymentLabel(
+              order.payment_status
+            )}
+
+          </span>
+
+        </td>
+
+
+        <td>
+
+          <span class="badge ${
+            order.delivery_status ===
+            "delivered"
+            ? "delivered"
+            : "notdelivered"
+          }">
+
+            ${
+              order.delivery_status ===
+              "delivered"
+              ? "Delivered"
+              : "Not Delivered"
+            }
+
+          </span>
+
+        </td>
+
+
+        <td>
+
+          <span style="font-size:12px;color:#999">
+            ${formatDate(order.created_at)}
+          </span>
+
+        </td>
+
+
+        <td>
+
+          <div class="actions">
+
+            <button
+              class="action"
+              onclick="viewOrderDetails(${order.id})"
+            >
+              👁 View Details
+            </button>
+
+
+            ${
+              order.payment_status !== "paid"
+              ? `
+                <button
+                  class="action green"
+                  onclick="updateOrder(
+                    ${order.id},
+                    'payment_status',
+                    'paid'
+                  )"
+                >
+                  ✓ Paid
+                </button>
+              `
+              : ""
+            }
+
+
+            ${
+              order.payment_status !== "failed"
+              ? `
+                <button
+                  class="action red"
+                  onclick="updateOrder(
+                    ${order.id},
+                    'payment_status',
+                    'failed'
+                  )"
+                >
+                  ✕ Failed
+                </button>
+              `
+              : ""
+            }
+
+
+            ${
+              order.delivery_status !== "delivered"
+              ? `
+                <button
+                  class="action"
+                  onclick="updateOrder(
+                    ${order.id},
+                    'delivery_status',
+                    'delivered'
+                  )"
+                >
+                  🚚 Deliver
+                </button>
+              `
+              : `
+                <button
+                  class="action"
+                  onclick="updateOrder(
+                    ${order.id},
+                    'delivery_status',
+                    'not_delivered'
+                  )"
+                >
+                  ↩ Undo Delivery
+                </button>
+              `
+            }
+
+          </div>
+
+        </td>
+
+      </tr>
+
+    `).join("");
+
+}
+
+
+/* UPDATE ORDER */
+
+async function updateOrder(
+  id,
+  field,
+  value
+){
+
+  try{
+
+    const response =
+      await fetch(
+        API +
+        "/api/admin/orders/" +
+        id,
+        {
+          method:"PATCH",
+
+          headers:{
+            "Content-Type":
+              "application/json",
+
+            "X-Admin-Key":
+              adminKey
+          },
+
+          body:JSON.stringify({
+            [field]:value
+          })
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if(!response.ok){
+
+      throw new Error(
+        data.error ||
+        "Update failed"
+      );
+
+    }
+
+
+    showStatus(
+      "Order updated successfully.",
+      "success"
+    );
+
+
+    await loadAll();
+
+
+  }catch(error){
+
+    showStatus(
+      error.message,
+      "error"
+    );
+
+  }
+
+}
+
+
+/* HELPERS */
+
+function naira(amount){
+
+  return "₦" +
+    Number(amount || 0)
+      .toLocaleString("en-NG");
+
+}
+
+
+function paymentLabel(status){
+
+  if(status === "paid")
+    return "Paid";
+
+  if(status === "failed")
+    return "Failed";
+
+  return "Pending";
+
+}
+
+
+function formatDate(date){
+
+  if(!date)
+    return "-";
+
+  const d =
+    new Date(date);
+
+  return d.toLocaleString(
+    "en-NG",
+    {
+      day:"2-digit",
+      month:"short",
+      year:"numeric",
+      hour:"2-digit",
+      minute:"2-digit"
+    }
+  );
+
+}
+
+
+function viewOrderDetails(id){
+
+  const order =
+    orders.find(
+      item => Number(item.id) === Number(id)
+    );
+
+  if(!order){
+
+    showStatus(
+      "Order not found.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  let items = [];
+
+  try{
+
+    items =
+      JSON.parse(
+        order.items_json || "[]"
+      );
+
+  }catch(error){
+
+    items = [];
+
+  }
+
+  const itemsHtml =
+    items.length
+    ? items.map(item => `
+
+        <div style="
+          display:flex;
+          justify-content:space-between;
+          gap:15px;
+          padding:10px 0;
+          border-bottom:1px solid #333;
+        ">
+
+          <span>
+            ${escapeHtml(item.product_name || "Product")}
+            × ${Number(item.quantity || 1)}
+          </span>
+
+          <strong>
+            ${naira(
+              Number(item.line_total || 0)
+            )}
+          </strong>
+
+        </div>
+
+      `).join("")
+    : `
+      <div style="color:#999">
+        No item details available.
+      </div>
+    `;
+
+  document.getElementById(
+    "orderDetailsContent"
+  ).innerHTML = `
+
+    <div style="line-height:1.7">
+
+      <div style="margin-bottom:18px">
+
+        <div style="color:#999;font-size:12px">
+          ORDER NUMBER
+        </div>
+
+        <strong style="font-size:20px">
+          ${escapeHtml(order.order_no)}
+        </strong>
+
+      </div>
+
+
+      <div style="margin-bottom:18px">
+
+        <div style="color:#999;font-size:12px">
+          CUSTOMER
+        </div>
+
+        <div>
+          ${escapeHtml(order.customer_name)}
+        </div>
+
+        <div>
+          ${escapeHtml(order.email)}
+        </div>
+
+        <div>
+          ${escapeHtml(order.phone)}
+        </div>
+
+      </div>
+
+
+      <div style="margin-bottom:18px">
+
+        <div style="color:#999;font-size:12px">
+          PRODUCTS
+        </div>
+
+        ${itemsHtml}
+
+      </div>
+
+
+      <div style="
+        display:flex;
+        justify-content:space-between;
+        margin:20px 0;
+        font-size:18px;
+      ">
+
+        <strong>Total</strong>
+
+        <strong>
+          ${naira(order.amount)}
+        </strong>
+
+      </div>
+
+
+      <div style="margin-bottom:12px">
+
+        <div style="color:#999;font-size:12px">
+          PAYMENT STATUS
+        </div>
+
+        <strong>
+          ${paymentLabel(order.payment_status)}
+        </strong>
+
+      </div>
+
+
+      <div style="margin-bottom:12px">
+
+        <div style="color:#999;font-size:12px">
+          DELIVERY STATUS
+        </div>
+
+        <strong>
+          ${
+            order.delivery_status === "delivered"
+            ? "Delivered"
+            : "Not Delivered"
+          }
+        </strong>
+
+      </div>
+
+
+      <div style="margin-bottom:12px">
+
+        <div style="color:#999;font-size:12px">
+          PAYMENT REFERENCE
+        </div>
+
+        <div style="word-break:break-all">
+          ${escapeHtml(
+            order.payment_reference || "Not available"
+          )}
+        </div>
+
+      </div>
+
+
+      <div>
+
+        <div style="color:#999;font-size:12px">
+          ORDER DATE
+        </div>
+
+        <div>
+          ${formatDate(order.created_at)}
+        </div>
+
+      </div>
+
+    </div>
+
+  `;
+
+  document.getElementById(
+    "orderDetailsModal"
+  ).style.display = "flex";
+
+}
+
+
+function closeOrderDetails(){
+
+  document.getElementById(
+    "orderDetailsModal"
+  ).style.display = "none";
+
+}
+
+
+function escapeHtml(value){
+
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+function showStatus(
+  message,
+  type
+){
+
+  const el =
+    document.getElementById(
+      "status"
+    );
+
+  el.textContent =
+    message;
+
+  el.className =
+    "status show " +
+    type;
+
+  setTimeout(() => {
+
+    el.className =
+      "status";
+
+  },3500);
+
+}
+
+
+/* ENTER KEY LOGIN */
+
+document
+  .getElementById("adminKey")
+  .addEventListener(
+    "keydown",
+    function(event){
+
+      if(event.key === "Enter"){
+
+        login();
+
+      }
+
+    }
+  );
+
+
+/* AUTO LOGIN */
+
+if(adminKey){
+
+  testLogin();
+
+}
+
+</script>
+
+
+<div
+  id="orderDetailsModal"
+  style="
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.75);
+    z-index:9999;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+  "
+>
+  <div
+    style="
+      background:#111;
+      color:#fff;
+      width:min(600px,100%);
+      max-height:90vh;
+      overflow:auto;
+      border-radius:18px;
+      padding:24px;
+      border:1px solid #333;
+    "
+  >
+    <div
+      style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        margin-bottom:20px;
+      "
+    >
+      <h2 style="margin:0">Order Details</h2>
+
+      <button
+        onclick="closeOrderDetails()"
+        style="
+          background:#333;
+          color:#fff;
+          border:0;
+          border-radius:8px;
+          padding:8px 12px;
+          font-size:18px;
+        "
+      >
+        ×
+      </button>
+    </div>
+
+    <div id="orderDetailsContent"></div>
+
+  </div>
+</div>
+
+</body>
+</html>
